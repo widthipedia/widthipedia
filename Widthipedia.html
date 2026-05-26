@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Widthipedia — The Shoe Width Wiki</title>
+  <meta name="description" content="A community wiki for people with wide or narrow feet. Search real insole measurements across hundreds of shoe brands and models.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --accent: #e8622a;
+      --accent-dark: #c44e1e;
+      --accent-light: #fdf1ec;
+      --accent-mid: #f5c4aa;
+      --bg: #ffffff;
+      --bg-warm: #faf8f6;
+      --bg-warm2: #f5f0eb;
+      --border: #e8e0d8;
+      --border-light: #f0ebe4;
+      --text: #1a1210;
+      --text-2: #5c504a;
+      --text-3: #a08880;
+      --text-4: #c8b8b0;
+      --success: #2d7a4f;
+      --success-bg: #edf7f2;
+      --warning: #9a5800;
+      --warning-bg: #fff8ed;
+      --danger: #be3a2a;
+      --danger-bg: #fdf0ee;
+      --info: #1a5fa8;
+      --info-bg: #eef4fc;
+      --radius-sm: 5px;
+      --radius: 9px;
+      --radius-lg: 14px;
+      --radius-xl: 20px;
+      --shadow-sm: 0 1px 3px rgba(26,18,16,0.08);
+      --shadow: 0 4px 16px rgba(26,18,16,0.1);
+      --shadow-lg: 0 8px 32px rgba(26,18,16,0.12);
+      --font-head: 'Sora', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); font-family: var(--font-body); color: var(--text); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+    /* ─── LAYOUT ─── */
+    .page { max-width: 1280px; margin: 0 auto; padding: 0 24px 100px; }
+
+    /* ─── HEADER ─── */
+    .site-header { border-bottom: 1px solid var(--border); padding: 16px 24px; position: sticky; top: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); z-index: 100; display: flex; align-items: center; justify-content: space-between; max-width: 100%; }
+    .header-logo { font-family: var(--font-head); font-size: 22px; font-weight: 800; letter-spacing: -0.5px; text-decoration: none; }
+    .header-logo .w { color: var(--accent); }
+    .header-logo .p { color: var(--text); }
+    .header-tagline { font-size: 13px; color: var(--text-3); font-style: italic; }
+
+    /* ─── HERO ─── */
+    .hero { padding: 56px 0 48px; border-bottom: 1px solid var(--border); margin-bottom: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+    .hero-left {}
+    .hero-logo { font-family: var(--font-head); font-size: 52px; font-weight: 800; letter-spacing: -2px; line-height: 1; margin-bottom: 10px; }
+    .hero-logo .w { color: var(--accent); }
+    .hero-logo .p { color: var(--text); }
+    .hero-sub { font-size: 17px; color: var(--text-2); font-style: italic; margin-bottom: 24px; line-height: 1.5; }
+    .hero-body { font-size: 14px; color: var(--text-2); line-height: 1.85; }
+    .hero-body p { margin-bottom: 12px; }
+    .hero-body p:last-child { margin-bottom: 0; }
+    .hero-body strong { color: var(--text); font-weight: 600; }
+    .hero-body a { color: var(--accent); text-decoration: none; font-weight: 500; }
+    .hero-body a:hover { text-decoration: underline; }
+    .hero-right { background: var(--bg-warm); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 28px; }
+    .hero-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .hero-stat { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; text-align: center; }
+    .hero-stat-val { font-family: var(--font-head); font-size: 36px; font-weight: 800; color: var(--accent); line-height: 1; margin-bottom: 4px; }
+    .hero-stat-label { font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; }
+    .hero-cta { background: var(--accent); color: white; border: none; border-radius: var(--radius); padding: 14px 20px; font-size: 15px; font-weight: 700; font-family: var(--font-head); cursor: pointer; width: 100%; transition: all 0.2s; letter-spacing: -0.2px; }
+    .hero-cta:hover { background: var(--accent-dark); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(232,98,42,0.35); }
+    .hero-cta-sub { font-size: 12px; color: var(--text-3); text-align: center; margin-top: 10px; }
+
+    /* ─── SECTION HEADING ─── */
+    .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .section-title { font-family: var(--font-head); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-3); }
+
+    /* ─── FILTERS ─── */
+    .filters { background: var(--bg-warm); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 16px; }
+    .filter-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .filter-row { display: flex; gap: 10px; margin-top: 10px; align-items: center; }
+    .filter-group { display: flex; flex-direction: column; gap: 4px; }
+    .filter-group label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); }
+    input, select, textarea { font-family: var(--font-body); font-size: 13px; padding: 8px 11px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); color: var(--text); outline: none; width: 100%; transition: border-color 0.15s, box-shadow 0.15s; }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+    input.error, select.error { border-color: var(--danger) !important; background: #fff8f8; }
+    .width-range { display: flex; align-items: center; gap: 8px; }
+    .width-range input { width: 80px !important; flex-shrink: 0; }
+    .width-range span { font-size: 12px; color: var(--text-3); white-space: nowrap; }
+    .filter-actions { display: flex; gap: 8px; align-items: center; margin-top: 10px; }
+
+    /* ─── BUTTONS ─── */
+    button { font-family: var(--font-body); cursor: pointer; transition: all 0.15s; }
+    .btn { font-size: 13px; padding: 8px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg); color: var(--text-2); font-weight: 500; }
+    .btn:hover { background: var(--bg-warm); color: var(--text); }
+    .btn-primary { background: var(--accent) !important; color: white !important; border-color: var(--accent) !important; font-weight: 700; font-family: var(--font-head); }
+    .btn-primary:hover { background: var(--accent-dark) !important; border-color: var(--accent-dark) !important; }
+    .btn-ghost { background: none; border: none; color: var(--text-3); font-size: 12px; padding: 6px 10px; border-radius: var(--radius-sm); }
+    .btn-ghost:hover { background: var(--bg-warm); color: var(--text-2); }
+    .btn-icon { background: none; border: none; padding: 4px 7px; border-radius: var(--radius-sm); color: var(--text-4); font-size: 14px; }
+    .btn-icon:hover { background: var(--accent-light); color: var(--accent); }
+    .btn-icon.del:hover { background: var(--danger-bg); color: var(--danger); }
+
+    /* ─── FAB ─── */
+    .fab { position: fixed; bottom: 28px; right: 28px; background: var(--accent); color: white; border: none; border-radius: 50px; padding: 15px 24px; font-size: 15px; font-weight: 700; font-family: var(--font-head); cursor: pointer; box-shadow: 0 4px 20px rgba(232,98,42,0.4); display: flex; align-items: center; gap: 8px; z-index: 500; transition: all 0.2s; letter-spacing: -0.2px; }
+    .fab:hover { background: var(--accent-dark); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(232,98,42,0.5); }
+    .fab:active { transform: translateY(0); }
+
+    /* ─── TABLE ─── */
+    .table-wrap { border: 1px solid var(--border); border-radius: var(--radius-lg); overflow-x: auto; box-shadow: var(--shadow-sm); }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 1100px; }
+    thead { background: var(--bg-warm); }
+    th { padding: 11px 13px; text-align: left; font-size: 10px; font-weight: 700; color: var(--text-3); border-bottom: 1px solid var(--border); white-space: nowrap; text-transform: uppercase; letter-spacing: 0.06em; font-family: var(--font-head); }
+    td { padding: 11px 13px; border-bottom: 1px solid var(--border-light); vertical-align: middle; color: var(--text); }
+    tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: var(--bg-warm); }
+    .td-brand { font-weight: 700; font-family: var(--font-head); font-size: 13px; }
+    .td-muted { color: var(--text-3); font-size: 12px; }
+
+    /* ─── BADGES ─── */
+    .badge { display: inline-block; font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: 600; font-family: var(--font-head); white-space: nowrap; }
+    .badge-regular { background: var(--bg-warm2); color: var(--text-2); }
+    .badge-narrow { background: var(--warning-bg); color: var(--warning); }
+    .badge-wide, .badge-xwide, .badge-2e, .badge-4e { background: var(--success-bg); color: var(--success); }
+    .badge-neutral { background: var(--bg-warm2); color: var(--text-2); }
+    .badge-stability { background: var(--info-bg); color: var(--info); }
+    .badge-motioncontrol { background: var(--danger-bg); color: var(--danger); }
+    .badge-minimalist { background: var(--success-bg); color: var(--success); }
+    .badge-male { background: var(--info-bg); color: var(--info); }
+    .badge-female { background: #fdf0f8; color: #a0389a; }
+    .badge-unisex { background: var(--bg-warm2); color: var(--text-2); }
+    .badge-toebox-wide { background: var(--success-bg); color: var(--success); }
+    .badge-toebox-standard { background: var(--bg-warm2); color: var(--text-2); }
+
+    /* ─── EMPTY STATE ─── */
+    .empty { text-align: center; padding: 56px 24px; color: var(--text-3); }
+    .empty-icon { font-size: 40px; margin-bottom: 12px; }
+    .empty-title { font-family: var(--font-head); font-size: 17px; font-weight: 700; color: var(--text-2); margin-bottom: 6px; }
+    .empty-sub { font-size: 13px; }
+
+    /* ─── LOADING ─── */
+    .loading { text-align: center; padding: 48px; color: var(--text-3); font-size: 14px; }
+    .spinner { display: inline-block; width: 24px; height: 24px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; margin-bottom: 10px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── FORM PANEL ─── */
+    .form-overlay { display: none; position: fixed; inset: 0; background: rgba(26,18,16,0.45); z-index: 600; backdrop-filter: blur(3px); }
+    .form-overlay.open { display: flex; align-items: flex-start; justify-content: center; padding: 32px 16px; overflow-y: auto; }
+    .form-card { background: var(--bg); border-radius: var(--radius-xl); padding: 28px; width: 100%; max-width: 720px; box-shadow: var(--shadow-lg); position: relative; margin: auto; }
+    .form-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .form-title { font-family: var(--font-head); font-size: 18px; font-weight: 800; color: var(--text); }
+    .form-close { background: var(--bg-warm); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 6px 10px; font-size: 16px; color: var(--text-2); cursor: pointer; }
+    .form-close:hover { background: var(--bg-warm2); }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-group label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-2); font-family: var(--font-head); }
+    .form-hint { font-size: 11px; color: var(--text-4); }
+    .req { color: var(--accent); }
+    .form-divider { grid-column: 1 / -1; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-4); padding-bottom: 7px; border-bottom: 1px solid var(--border); margin-top: 6px; font-family: var(--font-head); }
+    .form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }
+    .form-error { font-size: 12px; color: var(--danger); background: var(--danger-bg); padding: 9px 13px; border-radius: var(--radius-sm); margin-top: 12px; display: none; }
+    .form-error.show { display: block; }
+    .req-note { font-size: 11px; color: var(--text-4); margin-top: 10px; }
+    .editing-pill { display: inline-block; font-size: 11px; padding: 2px 9px; border-radius: 20px; background: var(--warning-bg); color: var(--warning); font-weight: 600; margin-left: 8px; }
+
+    /* ─── MEASURE ─── */
+    .measure-header { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; padding-bottom: 7px; border-bottom: 1px solid var(--border); margin-top: 6px; }
+    .measure-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-4); font-family: var(--font-head); }
+    .measure-btn { display: flex; align-items: center; gap: 6px; background: var(--accent-light); border: 1px solid var(--accent-mid); border-radius: var(--radius-sm); padding: 5px 12px; font-size: 12px; color: var(--accent); font-weight: 600; cursor: pointer; font-family: var(--font-head); }
+    .measure-btn:hover { background: #fbe5d8; }
+    .measure-arrow { transition: transform 0.2s; font-style: normal; }
+    .measure-btn.open .measure-arrow { transform: rotate(90deg); }
+    .measure-panel { display: none; grid-column: 1 / -1; background: var(--bg-warm); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 16px; }
+    .measure-panel.open { display: block; }
+    .measure-panel ol { padding-left: 1.2rem; }
+    .measure-panel li { font-size: 13px; line-height: 1.7; margin-bottom: 7px; color: var(--text-2); }
+    .measure-panel li:last-child { margin-bottom: 0; }
+    .measure-note { display: flex; gap: 7px; align-items: flex-start; margin-top: 7px; margin-left: -1.2rem; background: var(--accent-light); border-radius: var(--radius-sm); padding: 8px 11px; font-size: 12px; color: var(--accent-dark); line-height: 1.5; }
+
+    /* ─── DUPE WARNING ─── */
+    .dupe-warn { background: var(--warning-bg); border: 1px solid #f0d090; border-radius: var(--radius-sm); padding: 13px 15px; margin-top: 13px; font-size: 13px; color: var(--warning); display: none; }
+    .dupe-warn.show { display: block; }
+    .dupe-warn-title { font-weight: 700; font-family: var(--font-head); margin-bottom: 6px; }
+    .dupe-warn-actions { display: flex; gap: 8px; margin-top: 10px; }
+    .btn-warn { background: var(--warning-bg) !important; color: var(--warning) !important; border-color: #f0d090 !important; font-weight: 700 !important; }
+
+    /* ─── NUM WRAP ─── */
+    .num-wrap { position: relative; }
+    .num-wrap input { padding-right: 34px; }
+    .num-unit { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 11px; color: var(--text-4); pointer-events: none; font-weight: 600; }
+
+    /* ─── COMBO ─── */
+    .combo-wrap { position: relative; }
+    .combo-dd { position: absolute; top: calc(100% + 3px); left: 0; right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); max-height: 210px; overflow-y: auto; z-index: 200; display: none; box-shadow: var(--shadow); }
+    .combo-dd.open { display: block; }
+    .combo-opt { padding: 9px 13px; font-size: 13px; cursor: pointer; color: var(--text); }
+    .combo-opt:hover, .combo-opt.active { background: var(--accent-light); color: var(--accent); }
+
+    /* ─── TOAST ─── */
+    .toast { position: fixed; bottom: 90px; right: 28px; background: var(--text); color: white; padding: 11px 18px; border-radius: var(--radius); font-size: 13px; font-weight: 600; font-family: var(--font-head); z-index: 800; opacity: 0; transform: translateY(8px); transition: all 0.25s; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ─── RESULT COUNT ─── */
+    .result-count { font-size: 12px; color: var(--text-3); }
+
+    /* ─── FOOTER ─── */
+    .footer { border-top: 1px solid var(--border); padding: 28px 24px; margin-top: 48px; display: flex; align-items: center; justify-content: space-between; }
+    .footer-logo { font-family: var(--font-head); font-size: 16px; font-weight: 800; }
+    .footer-logo .w { color: var(--accent); }
+    .footer-text { font-size: 12px; color: var(--text-3); }
+    .footer-text a { color: var(--accent); text-decoration: none; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-logo { font-size: 38px; }
+      .filter-grid { grid-template-columns: 1fr 1fr; }
+      .form-grid { grid-template-columns: 1fr 1fr; }
+      .hero-right { display: none; }
+    }
+    @media (max-width: 600px) {
+      .filter-grid { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+      .fab { bottom: 16px; right: 16px; padding: 13px 18px; font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="header-logo" href="#"><span class="w">Width</span><span class="p">ipedia</span></a>
+  <span class="header-tagline">The community shoe width wiki</span>
+</header>
+
+<main>
+  <div class="page">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-left">
+        <div class="hero-logo"><span class="w">Width</span><span class="p">ipedia</span></div>
+        <div class="hero-sub">The community wiki for people who are tired of shoes that don't fit.</div>
+        <div class="hero-body">
+          <p>If you have wide or narrow feet, you'll know the frustration. Most shoe brands publish size guides that list length but rarely width. Most retailers don't stock the extended sizes. So you end up buying online, trying on at home, and sending back. Repeat. Forever.</p>
+          <p>Widthipedia was born out of that frustration. The idea is simple: what if you could search a wiki and instantly find which brands and models are over 100mm or under 90mm wide? That information exists but it's just never been in one place. Until now.</p>
+          <p><strong>That's where you come in.</strong> If you've found this page, chances are you're wasting time on the same merry-go-round. Every shoe you try on is data. Whether you keep it or return it, measuring the insole takes two minutes and helps everyone who comes after you.</p>
+          <p>Together we can build the most useful shoe width resource on the internet and maybe one day get the brands themselves to start publishing this information.</p>
+          <p><strong>Thank you for being part of it.</strong> Have a suggestion or want to get in touch? Drop us a message at <a href="mailto:hello@widthipedia.com">hello@widthipedia.com</a></p>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="hero-stat-val" id="stat-shoes">0</div>
+            <div class="hero-stat-label">Shoes logged</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-val" id="stat-brands">0</div>
+            <div class="hero-stat-label">Brands covered</div>
+          </div>
+        </div>
+        <button class="hero-cta" onclick="openForm()">+ Add a shoe</button>
+        <div class="hero-cta-sub">Takes about 2 minutes · No account needed</div>
+      </div>
+    </section>
+
+    <!-- SEARCH -->
+    <div class="section-head">
+      <span class="section-title">Search the wiki</span>
+      <span class="result-count" id="result-count"></span>
+    </div>
+
+    <div class="filters">
+      <div class="filter-grid">
+        <div class="filter-group">
+          <label>Search</label>
+          <input type="text" id="search" placeholder="Brand or model..." oninput="render()">
+        </div>
+        <div class="filter-group">
+          <label>Gender</label>
+          <select id="filter-gender" onchange="render()">
+            <option value="">All genders</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Unisex">Unisex</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Brand</label>
+          <select id="filter-brand" onchange="render()"><option value="">All brands</option></select>
+        </div>
+        <div class="filter-group">
+          <label>Width rating</label>
+          <select id="filter-fit" onchange="render()">
+            <option value="">All</option>
+            <option value="Regular">Regular</option>
+            <option value="Wide">Wide</option>
+            <option value="X-Wide">X-Wide</option>
+            <option value="2E">2E</option>
+            <option value="4E">4E</option>
+            <option value="Narrow">Narrow</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Type</label>
+          <select id="filter-type" onchange="render()">
+            <option value="">All types</option>
+            <option value="Neutral">Neutral</option>
+            <option value="Stability">Stability</option>
+            <option value="Motion Control">Motion Control</option>
+            <option value="Minimalist">Minimalist</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Sort</label>
+          <select id="sort-col" onchange="render()">
+            <option value="brand">Brand A–Z</option>
+            <option value="model">Model A–Z</option>
+            <option value="width_asc">Width ↑ (narrowest first)</option>
+            <option value="width_desc">Width ↓ (widest first)</option>
+            <option value="drop">Drop ↑</option>
+          </select>
+        </div>
+      </div>
+      <div class="filter-row">
+        <div class="filter-group">
+          <label>Insole width (mm)</label>
+          <div class="width-range">
+            <input type="number" id="width-min" placeholder="min" min="50" max="200" step="1" oninput="render()">
+            <span>–</span>
+            <input type="number" id="width-max" placeholder="max" min="50" max="200" step="1" oninput="render()">
+            <span>mm</span>
+          </div>
+        </div>
+        <div style="margin-top:18px;">
+          <button class="btn-ghost" onclick="clearFilters()">✕ Clear filters</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap" id="table-wrap">
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <div>Loading the wiki...</div>
+      </div>
+      <table id="main-table" style="display:none;">
+        <thead>
+          <tr>
+            <th>Brand</th><th>Model</th><th>Version</th><th>Gender</th>
+            <th>UK</th><th>EU</th><th>US</th>
+            <th>Insole length</th><th>Insole width</th><th>Width rating</th>
+            <th>Drop</th><th>Type</th><th>Toe box</th><th>Notes</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      <div class="empty" id="empty" style="display:none;">
+        <div class="empty-icon">👟</div>
+        <div class="empty-title">No shoes found</div>
+        <div class="empty-sub">Try adjusting your filters or be the first to add a shoe!</div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer class="footer page">
+  <span class="footer-logo"><span class="w">Width</span><span class="p">ipedia</span></span>
+  <span class="footer-text">Built by the community · <a href="mailto:hello@widthipedia.com">hello@widthipedia.com</a></span>
+</footer>
+
+<!-- STICKY FAB -->
+<button class="fab" onclick="openForm()">+ Add a shoe</button>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✓ Saved — thank you!</div>
+
+<!-- FORM OVERLAY -->
+<div class="form-overlay" id="form-overlay" onclick="overlayClick(event)">
+  <div class="form-card">
+    <div class="form-header">
+      <div>
+        <span class="form-title" id="form-title">Add a shoe</span>
+        <span class="editing-pill" id="editing-pill" style="display:none">Editing</span>
+      </div>
+      <button class="form-close" onclick="closeForm()">✕</button>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-divider">Identity</div>
+      <div class="form-group">
+        <label>Brand <span class="req">*</span></label>
+        <div class="combo-wrap" id="brand-combo">
+          <input id="f-brand" placeholder="Type or select..." autocomplete="off" oninput="filterCombo()" onfocus="openCombo()" onkeydown="comboKey(event)">
+          <div class="combo-dd" id="brand-dd"></div>
+        </div>
+      </div>
+      <div class="form-group"><label>Model / style <span class="req">*</span></label><input id="f-model" placeholder="e.g. Air Max"></div>
+      <div class="form-group"><label>Version</label><input id="f-version" placeholder="e.g. 90, v5, 2024"></div>
+      <div class="form-group">
+        <label>Gender <span class="req">*</span></label>
+        <select id="f-gender" onchange="updateSizes()">
+          <option value="">— select —</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Unisex">Unisex</option>
+        </select>
+      </div>
+
+      <div class="form-divider">Sizing <span style="font-weight:400;text-transform:none;letter-spacing:0;font-family:var(--font-body)">(at least one required <span class="req">*</span>)</span></div>
+      <div class="form-group"><label>UK size tested</label><select id="f-uk"></select></div>
+      <div class="form-group"><label>EU size tested</label><select id="f-eu"></select></div>
+      <div class="form-group"><label>US size tested</label><select id="f-us"></select></div>
+
+      <div class="measure-header">
+        <span class="measure-label">Insole measurements (at size tested)</span>
+        <button class="measure-btn" id="measure-btn" onclick="toggleMeasure()">📏 How to measure <i class="measure-arrow">▶</i></button>
+      </div>
+      <div class="measure-panel" id="measure-panel">
+        <ol>
+          <li><strong>Prep:</strong> Remove the insole from the shoe and lay it completely flat on a hard, even surface.</li>
+          <li><strong>Measure Length:</strong> Place a ruler straight down the middle of the insole. Measure in a straight line from the very centre of the heel edge to the furthest point of the toe edge.</li>
+          <li><strong>Measure Width:</strong> Look at the wide area near the front. Place the ruler perfectly straight across the widest part.
+            <div class="measure-note">⚠️ Do not tilt the ruler diagonally. Keep it strictly horizontal (at a 90-degree angle to the length line).</div>
+          </li>
+        </ol>
+      </div>
+
+      <div class="form-group">
+        <label>Insole length (mm) <span class="req">*</span></label>
+        <div class="num-wrap"><input id="f-length" type="number" min="150" max="400" step="1" placeholder="e.g. 285"><span class="num-unit">mm</span></div>
+        <span class="form-hint">Full length of removable insole</span>
+      </div>
+      <div class="form-group">
+        <label>Insole width (mm) <span class="req">*</span></label>
+        <div class="num-wrap"><input id="f-width" type="number" min="60" max="160" step="1" placeholder="e.g. 97"><span class="num-unit">mm</span></div>
+        <span class="form-hint">Widest point of insole</span>
+      </div>
+      <div class="form-group">
+        <label>Width rating <span class="req">*</span></label>
+        <select id="f-fit">
+          <option value="">— select —</option>
+          <option value="Regular">Regular</option>
+          <option value="Wide">Wide</option>
+          <option value="X-Wide">X-Wide</option>
+          <option value="2E">2E</option>
+          <option value="4E">4E</option>
+          <option value="Narrow">Narrow</option>
+        </select>
+      </div>
+
+      <div class="form-divider">Fit & type</div>
+      <div class="form-group">
+        <label>Type</label>
+        <select id="f-type">
+          <option value="Neutral">Neutral</option>
+          <option value="Stability">Stability</option>
+          <option value="Motion Control">Motion Control</option>
+          <option value="Minimalist">Minimalist</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Toe box shape</label>
+        <select id="f-toebox">
+          <option value="">— not specified —</option>
+          <option value="Standard">Standard</option>
+          <option value="Wide">Wide</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Drop (mm)</label>
+        <div class="num-wrap"><input id="f-drop" type="number" min="0" max="40" step="1" placeholder="e.g. 8"><span class="num-unit">mm</span></div>
+        <span class="form-hint">Heel-to-toe drop</span>
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-top:12px;">
+      <label>Notes</label>
+      <textarea id="f-notes" rows="2" placeholder="e.g. sizing runs large (+0.5 up), heel lock, toe box feel, material notes..."></textarea>
+    </div>
+
+    <div class="req-note"><span class="req">*</span> Required fields</div>
+    <div class="form-error" id="form-error"></div>
+
+    <div class="dupe-warn" id="dupe-warn">
+      <div class="dupe-warn-title">⚠️ Possible duplicate detected</div>
+      <div id="dupe-msg"></div>
+      <div class="dupe-warn-actions">
+        <button class="btn btn-warn" onclick="confirmSave()">Save anyway</button>
+        <button class="btn" onclick="hideDupe()">Cancel</button>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn" onclick="closeForm()">Cancel</button>
+      <button class="btn btn-primary" id="save-btn" onclick="saveEntry()">Save entry</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ─── SUPABASE CONFIG ───────────────────────────────────────────────
+  // Replace these two values with your own from Supabase → Project Settings → API
+  const SUPABASE_URL = 'https://cwkwswhtolsngircwcgi.supabase.co'
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN3a3dzd2h0b2xzbmdpcmN3Y2dpIiwicm9sZSI6ImFub24iLCJpYXQiOj'
+  // ───────────────────────────────────────────────────────────────────
+
+  const { createClient } = supabase
+  const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+  let allData = [], filteredData = [], editingId = null, pendingEntry = null
+
+  // ─── SIZE RANGES ───
+  const SIZES = {
+    Male:   { uk: range(4,16,0.5),  eu: range(37,52,0.5), us: range(5,17,0.5)  },
+    Female: { uk: range(2,10,0.5),  eu: range(33,44,0.5), us: range(4,13,0.5)  },
+    Unisex: { uk: range(4,16,0.5),  eu: range(37,52,0.5), us: range(5,17,0.5)  },
+  }
+  function range(min,max,step){const o=[];for(let v=min;v<=max;v=Math.round((v+step)*10)/10)o.push(v);return o;}
+  function buildSizeSelect(id,vals,cur){const s=document.getElementById(id);s.innerHTML=`<option value="">— select —</option>`+vals.map(v=>{const l=Number.isInteger(v)?v:v.toFixed(1);return`<option value="${l}"${l===cur?' selected':''}>${l}</option>`;}).join('');}
+  function updateSizes(){const g=document.getElementById('f-gender').value;if(!g){['f-uk','f-eu','f-us'].forEach(id=>{document.getElementById(id).innerHTML=`<option value="">— select gender first —</option>`;});return;}const sz=SIZES[g]||SIZES.Male;buildSizeSelect('f-uk',sz.uk,'');buildSizeSelect('f-eu',sz.eu,'');buildSizeSelect('f-us',sz.us,'');}
+
+  // ─── BRANDS COMBO ───
+  const BRANDS = ["Adidas","ASICS","Altra","Balenciaga","Bata","Birkenstock","Brooks","Clarks","Converse","Crocs","Danner","Diadora","Dr. Martens","Ecco","Fila","Fitflop","FootJoy","Geox","Hoka","Hugo Boss","Inov-8","K-Swiss","Keen","La Sportiva","Lacoste","Lowa","Lululemon","Merrell","Mizuno","Moncler","New Balance","Nike","Norda","Northface","On Running","Puma","Reebok","Salomon","Saucony","Scarpa","Sketchers","Sorel","Speedo","Sperry","Teva","Timberland","Topo Athletic","Under Armour","Vans","Vibram","Vivobarefoot","Voile Blanche","Wolverine","Xero Shoes","Yeezy","Zara"].sort()
+  let comboList=[...BRANDS], comboIdx=-1
+  function buildCombo(){document.getElementById('brand-dd').innerHTML=comboList.map(b=>`<div class="combo-opt" data-val="${b}" onmousedown="pickBrand('${b}')">${b}</div>`).join('');}
+  function openCombo(){comboList=[...BRANDS];buildCombo();document.getElementById('brand-dd').classList.add('open');}
+  function filterCombo(){const q=document.getElementById('f-brand').value.toLowerCase();comboList=BRANDS.filter(b=>b.toLowerCase().includes(q));comboIdx=-1;buildCombo();document.getElementById('brand-dd').classList.add('open');}
+  function pickBrand(v){document.getElementById('f-brand').value=v;document.getElementById('brand-dd').classList.remove('open');}
+  function comboKey(e){const opts=document.querySelectorAll('.combo-opt');if(e.key==='ArrowDown'){comboIdx=Math.min(comboIdx+1,opts.length-1);hc(opts);e.preventDefault();}else if(e.key==='ArrowUp'){comboIdx=Math.max(comboIdx-1,0);hc(opts);e.preventDefault();}else if(e.key==='Enter'&&comboIdx>=0){pickBrand(opts[comboIdx].dataset.val);e.preventDefault();}else if(e.key==='Escape'){document.getElementById('brand-dd').classList.remove('open');}}
+  function hc(opts){opts.forEach((o,i)=>o.classList.toggle('active',i===comboIdx));if(comboIdx>=0)opts[comboIdx].scrollIntoView({block:'nearest'});}
+  document.addEventListener('click',e=>{if(!document.getElementById('brand-combo').contains(e.target))document.getElementById('brand-dd').classList.remove('open');})
+
+  // ─── MEASURE ───
+  function toggleMeasure(){const p=document.getElementById('measure-panel'),b=document.getElementById('measure-btn');p.classList.toggle('open');b.classList.toggle('open');}
+
+  // ─── LOAD DATA ───
+  async function loadData(){
+    const{data,error}=await db.from('shoes').select('*').order('created_at',{ascending:false})
+    if(error){console.error(error);document.getElementById('loading').innerHTML='<p style="color:var(--danger);padding:24px;">Error loading data. Please refresh.</p>';return;}
+    allData=data||[]
+    document.getElementById('loading').style.display='none'
+    document.getElementById('main-table').style.display='table'
+    populateBrandFilter()
+    render()
+  }
+
+  // ─── BRAND FILTER ───
+  function populateBrandFilter(){const sel=document.getElementById('filter-brand');const used=[...new Set(allData.map(r=>r.brand).filter(Boolean))].sort();sel.innerHTML=`<option value="">All brands</option>`+used.map(b=>`<option value="${b}">${b}</option>`).join('');}
+
+  // ─── RENDER ───
+  function render(){
+    const q=document.getElementById('search').value.toLowerCase().trim()
+    const fg=document.getElementById('filter-gender').value
+    const fb=document.getElementById('filter-brand').value
+    const ff=document.getElementById('filter-fit').value
+    const ft=document.getElementById('filter-type').value
+    const sc=document.getElementById('sort-col').value
+    const wMinR=document.getElementById('width-min').value.trim()
+    const wMaxR=document.getElementById('width-max').value.trim()
+    const wMin=wMinR!==''?parseFloat(wMinR):null
+    const wMax=wMaxR!==''?parseFloat(wMaxR):null
+
+    filteredData=allData.filter(r=>{
+      if(q&&!(r.brand||'').toLowerCase().includes(q)&&!(r.model||'').toLowerCase().includes(q)&&!(r.version||'').toLowerCase().includes(q))return false
+      if(fg&&r.gender!==fg)return false
+      if(fb&&r.brand!==fb)return false
+      if(ff&&r.fit!==ff)return false
+      if(ft&&r.type!==ft)return false
+      if(wMin!==null||wMax!==null){const w=parseFloat(r.width);if(isNaN(w))return false;if(wMin!==null&&w<wMin)return false;if(wMax!==null&&w>wMax)return false;}
+      return true
+    }).sort((a,b)=>{
+      if(sc==='width_asc')return(parseFloat(a.width)||0)-(parseFloat(b.width)||0)
+      if(sc==='width_desc')return(parseFloat(b.width)||0)-(parseFloat(a.width)||0)
+      if(sc==='drop')return(parseFloat(a.drop)||0)-(parseFloat(b.drop)||0)
+      if(sc==='model')return(a.model||'').localeCompare(b.model||'')
+      return(a.brand||'').localeCompare(b.brand||'')
+    })
+
+    const tbody=document.getElementById('tbody')
+    const empty=document.getElementById('empty')
+    const count=document.getElementById('result-count')
+
+    count.textContent=allData.length?(filteredData.length<allData.length?`Showing ${filteredData.length} of ${allData.length} shoes`:`${allData.length} shoe${allData.length!==1?'s':''}`):'';
+
+    if(!filteredData.length){tbody.innerHTML='';empty.style.display='block';}
+    else{
+      empty.style.display='none'
+      tbody.innerHTML=filteredData.map(r=>`<tr>
+        <td class="td-brand">${esc(r.brand)}</td>
+        <td>${esc(r.model)}</td>
+        <td class="td-muted">${esc(r.version)}</td>
+        <td>${gBadge(r.gender)}</td>
+        <td class="td-muted">${esc(r.uk)}</td>
+        <td class="td-muted">${esc(r.eu)}</td>
+        <td class="td-muted">${esc(r.us)}</td>
+        <td class="td-muted">${r.length?r.length+'mm':'—'}</td>
+        <td class="td-muted">${r.width?r.width+'mm':'—'}</td>
+        <td>${fitBadge(r.fit)}</td>
+        <td class="td-muted">${r.drop?r.drop+'mm':'—'}</td>
+        <td>${typeBadge(r.type)}</td>
+        <td>${toeboxBadge(r.toebox)}</td>
+        <td class="td-muted" style="max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${esc(r.notes)}">${esc(r.notes)}</td>
+        <td style="white-space:nowrap">
+          <button class="btn-icon" onclick="openEdit(${r.id})" title="Edit">✏️</button>
+        </td>
+      </tr>`).join('')
+    }
+
+    // Update stats
+    const brands=new Set(allData.map(r=>r.brand).filter(Boolean)).size
+    document.getElementById('stat-shoes').textContent=allData.length
+    document.getElementById('stat-brands').textContent=brands
+  }
+
+  function esc(v){if(!v)return'—';return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+  function fitBadge(f){const c={Regular:'regular',Wide:'wide','X-Wide':'xwide','2E':'2e','4E':'4e',Narrow:'narrow'}[f]||'regular';return f?`<span class="badge badge-${c}">${f}</span>`:'—';}
+  function typeBadge(t){const c={Neutral:'neutral',Stability:'stability','Motion Control':'motioncontrol',Minimalist:'minimalist'}[t]||'neutral';return`<span class="badge badge-${c}">${t||'Neutral'}</span>`;}
+  function gBadge(g){const c={Male:'male',Female:'female',Unisex:'unisex'}[g]||'unisex';return g?`<span class="badge badge-${c}">${g}</span>`:'—';}
+  function toeboxBadge(t){if(!t)return'—';return`<span class="badge badge-toebox-${t.toLowerCase()}">${t}</span>`;}
+
+  // ─── FILTERS ───
+  function clearFilters(){['search','width-min','width-max'].forEach(id=>document.getElementById(id).value='');['filter-gender','filter-brand','filter-fit','filter-type'].forEach(id=>document.getElementById(id).value='');document.getElementById('sort-col').value='brand';render();}
+
+  // ─── FORM ───
+  function openForm(){
+    editingId=null;clearForm()
+    document.getElementById('form-title').textContent='Add a shoe'
+    document.getElementById('editing-pill').style.display='none'
+    document.getElementById('save-btn').textContent='Save entry'
+    document.getElementById('form-overlay').classList.add('open')
+    document.getElementById('f-brand').focus()
+  }
+  function openEdit(id){
+    const r=allData.find(x=>x.id===id);if(!r)return
+    editingId=id;fillForm(r)
+    document.getElementById('form-title').textContent=`${r.brand||''} ${r.model||''}`
+    document.getElementById('editing-pill').style.display='inline-block'
+    document.getElementById('save-btn').textContent='Update entry'
+    document.getElementById('form-overlay').classList.add('open')
+    document.getElementById('f-brand').focus()
+  }
+  function closeForm(){document.getElementById('form-overlay').classList.remove('open');editingId=null;hideDupe();clearErrors();}
+  function overlayClick(e){if(e.target===document.getElementById('form-overlay'))closeForm();}
+
+  function fillForm(r){
+    document.getElementById('f-brand').value=r.brand||''
+    document.getElementById('f-model').value=r.model||''
+    document.getElementById('f-version').value=r.version||''
+    document.getElementById('f-gender').value=r.gender||''
+    if(r.gender){const sz=SIZES[r.gender]||SIZES.Male;buildSizeSelect('f-uk',sz.uk,r.uk||'');buildSizeSelect('f-eu',sz.eu,r.eu||'');buildSizeSelect('f-us',sz.us,r.us||'');}
+    else{updateSizes();}
+    ;['length','width','drop'].forEach(f=>{const el=document.getElementById('f-'+f);if(el)el.value=r[f]||'';})
+    document.getElementById('f-fit').value=r.fit||''
+    document.getElementById('f-type').value=r.type||'Neutral'
+    document.getElementById('f-toebox').value=r.toebox||''
+    document.getElementById('f-notes').value=r.notes||''
+  }
+
+  function clearForm(){
+    ;['f-brand','f-model','f-version','f-length','f-width','f-drop','f-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';})
+    document.getElementById('f-gender').value='';updateSizes()
+    document.getElementById('f-fit').value=''
+    document.getElementById('f-type').value='Neutral'
+    document.getElementById('f-toebox').value=''
+    hideDupe();clearErrors()
+  }
+
+  function gfv(){return{brand:document.getElementById('f-brand').value.trim(),model:document.getElementById('f-model').value.trim(),version:document.getElementById('f-version').value.trim(),gender:document.getElementById('f-gender').value,uk:document.getElementById('f-uk').value,eu:document.getElementById('f-eu').value,us:document.getElementById('f-us').value,length:document.getElementById('f-length').value.trim(),width:document.getElementById('f-width').value.trim(),fit:document.getElementById('f-fit').value,drop:document.getElementById('f-drop').value.trim(),type:document.getElementById('f-type').value,toebox:document.getElementById('f-toebox').value,notes:document.getElementById('f-notes').value.trim()};}
+
+  function norm(v){return(v||'').toString().trim().toLowerCase();}
+
+  function validate(e){
+    const errors=[],ids=[]
+    if(!e.brand){errors.push('Brand');ids.push('f-brand');}
+    if(!e.model){errors.push('Model');ids.push('f-model');}
+    if(!e.gender){errors.push('Gender');ids.push('f-gender');}
+    if(!e.uk&&!e.eu&&!e.us){errors.push('at least one size');ids.push('f-uk');ids.push('f-eu');ids.push('f-us');}
+    if(!e.length){errors.push('Insole length');ids.push('f-length');}
+    if(!e.width){errors.push('Insole width');ids.push('f-width');}
+    if(!e.fit){errors.push('Width rating');ids.push('f-fit');}
+    return{errors,ids}
+  }
+
+  function clearErrors(){document.querySelectorAll('input.error,select.error').forEach(el=>el.classList.remove('error'));const m=document.getElementById('form-error');m.textContent='';m.classList.remove('show');}
+
+  function findDupe(entry,excludeId){return allData.find(r=>{if(r.id===excludeId)return false;if(norm(r.brand)!==norm(entry.brand)||norm(r.model)!==norm(entry.model)||norm(r.version)!==norm(entry.version))return false;return(entry.uk&&r.uk&&norm(r.uk)===norm(entry.uk))||(entry.eu&&r.eu&&norm(r.eu)===norm(entry.eu))||(entry.us&&r.us&&norm(r.us)===norm(entry.us));});}
+
+  function hideDupe(){document.getElementById('dupe-warn').classList.remove('show');pendingEntry=null;}
+
+  async function saveEntry(){
+    clearErrors();hideDupe()
+    const entry=gfv()
+    const{errors,ids}=validate(entry)
+    if(errors.length){ids.forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('error');});const m=document.getElementById('form-error');m.textContent=`Please fill in: ${errors.join(', ')}.`;m.classList.add('show');return;}
+    const dupe=findDupe(entry,editingId)
+    if(dupe){const sz=[dupe.uk&&`UK ${dupe.uk}`,dupe.eu&&`EU ${dupe.eu}`,dupe.us&&`US ${dupe.us}`].filter(Boolean).join(', ');document.getElementById('dupe-msg').textContent=`An entry for ${dupe.brand} ${dupe.model}${dupe.version?' '+dupe.version:''} already exists${sz?' at '+sz:''}. You can save anyway if the measurements differ, or cancel to check.`;document.getElementById('dupe-warn').classList.add('show');pendingEntry=entry;return;}
+    await commit(entry)
+  }
+
+  async function confirmSave(){if(pendingEntry){await commit(pendingEntry);hideDupe();}}
+
+  async function commit(entry){
+    document.getElementById('save-btn').textContent='Saving...'
+    document.getElementById('save-btn').disabled=true
+    let error
+    if(editingId!==null){
+      const res=await db.from('shoes').update(entry).eq('id',editingId)
+      error=res.error
+      if(!error){const idx=allData.findIndex(x=>x.id===editingId);if(idx>-1)allData[idx]={...allData[idx],...entry};}
+    } else {
+      const res=await db.from('shoes').insert([entry]).select()
+      error=res.error
+      if(!error&&res.data)allData.unshift(res.data[0])
+    }
+    document.getElementById('save-btn').textContent=editingId?'Update entry':'Save entry'
+    document.getElementById('save-btn').disabled=false
+    if(error){const m=document.getElementById('form-error');m.textContent='Error saving. Please try again.';m.classList.add('show');return;}
+    closeForm();populateBrandFilter();render();showToast()
+  }
+
+  function showToast(){const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+  // ─── INIT ───
+  loadData()
+  updateSizes()
+</script>
+</body>
+</html>
