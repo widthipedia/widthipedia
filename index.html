@@ -47,11 +47,11 @@
     .hero-body a:hover { text-decoration: underline; }
     /* "This is where you come in" call-out box */
     .hero-cta-box { margin: 20px 0; }
-    .hero-cta-box-inner { background: var(--accent); border-radius: var(--radius-lg); padding: 22px 24px; }
-    .hero-cta-box-heading { font-family: var(--font-head); font-size: 17px; font-weight: 800; color: white; margin-bottom: 10px; letter-spacing: -0.3px; }
-    .hero-cta-box-inner p { color: rgba(255,255,255,0.9); margin-bottom: 16px; font-size: 14px; }
-    .hero-cta-inline { background: white; color: var(--accent); border: none; border-radius: var(--radius-sm); padding: 11px 18px; font-size: 14px; font-weight: 700; font-family: var(--font-head); cursor: pointer; transition: all 0.2s; letter-spacing: -0.2px; }
-    .hero-cta-inline:hover { background: var(--accent-light); transform: translateY(-1px); }
+    .hero-cta-box-inner { background: var(--bg-warm); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 22px 24px; }
+    .hero-cta-box-heading { font-family: var(--font-head); font-size: 16px; font-weight: 800; color: var(--text); margin-bottom: 10px; letter-spacing: -0.3px; }
+    .hero-cta-box-inner p { color: var(--text-2); margin-bottom: 16px; font-size: 14px; }
+    .hero-cta-inline { background: var(--accent); color: white; border: none; border-radius: var(--radius-sm); padding: 11px 18px; font-size: 14px; font-weight: 700; font-family: var(--font-head); cursor: pointer; transition: all 0.2s; letter-spacing: -0.2px; }
+    .hero-cta-inline:hover { background: var(--accent-dark); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(232,98,42,0.35); }
     .hero-right { background: var(--bg-warm); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 28px; }
     .hero-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
     .hero-stat { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; text-align: center; }
@@ -579,9 +579,10 @@
     updateSizeFilter();
   }
 
-  function openForm(){editingId=null;clearForm();document.getElementById('form-title').textContent='Add a shoe';document.getElementById('editing-pill').style.display='none';document.getElementById('save-btn').textContent='Save entry';document.getElementById('form-overlay').classList.add('open');document.body.style.overflow='hidden';document.getElementById('f-brand').focus();}
-  function openEdit(id){const r=allData.find(x=>x.id===id);if(!r)return;editingId=id;fillForm(r);document.getElementById('form-title').textContent=(r.brand||'')+' '+(r.model||'');document.getElementById('editing-pill').style.display='inline-block';document.getElementById('save-btn').textContent='Update entry';document.getElementById('form-overlay').classList.add('open');document.body.style.overflow='hidden';document.getElementById('f-brand').focus();}
-  function closeForm(){document.getElementById('form-overlay').classList.remove('open');document.body.style.overflow='';editingId=null;hideDupe();clearErrors();}
+  let _scrollY = 0;
+  function openForm(){editingId=null;clearForm();document.getElementById('form-title').textContent='Add a shoe';document.getElementById('editing-pill').style.display='none';document.getElementById('save-btn').textContent='Save entry';_scrollY=window.scrollY;document.body.style.position='fixed';document.body.style.top='-'+_scrollY+'px';document.body.style.width='100%';document.getElementById('form-overlay').classList.add('open');document.getElementById('f-brand').focus();}
+  function openEdit(id){const r=allData.find(x=>x.id===id);if(!r)return;editingId=id;fillForm(r);document.getElementById('form-title').textContent=(r.brand||'')+' '+(r.model||'');document.getElementById('editing-pill').style.display='inline-block';document.getElementById('save-btn').textContent='Update entry';_scrollY=window.scrollY;document.body.style.position='fixed';document.body.style.top='-'+_scrollY+'px';document.body.style.width='100%';document.getElementById('form-overlay').classList.add('open');document.getElementById('f-brand').focus();}
+  function closeForm(){document.getElementById('form-overlay').classList.remove('open');document.body.style.position='';document.body.style.top='';document.body.style.width='';window.scrollTo(0,_scrollY);editingId=null;hideDupe();clearErrors();}
   function overlayClick(e){if(e.target===document.getElementById('form-overlay'))closeForm();}
 
   function fillForm(r){
