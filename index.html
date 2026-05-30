@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Widthipedia — The Shoe Width Wiki</title>
-  <meta name="description" content="A community wiki for people with wide or narrow feet. Search real insole measurements across hundreds of shoe brands and models.">
+  <title>Widthipedia — Shoe Width Guide for Wide &amp; Narrow Feet</title>
+  <meta name="description" content="Find shoes that actually fit. Widthipedia is a community wiki of real insole width measurements by brand, model and size — built for people with wide or narrow feet.">
+  <meta name="keywords" content="wide fit shoes, wide feet shoes, shoe width guide, narrow feet shoes, insole width, shoe width measurements, wide shoe database, 2E 4E wide fitting shoes">
+  <link rel="canonical" href="https://widthipedia.com">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
@@ -26,23 +28,30 @@
     }
     html { scroll-behavior: smooth; }
     body { background: var(--bg); font-family: var(--font-body); color: var(--text); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    /* FIX: prevent content overflow on mobile after modal close */
+    body, html { max-width: 100%; overflow-x: hidden; }
     .page { max-width: 1280px; margin: 0 auto; padding: 0 24px 100px; }
     .site-header { border-bottom: 1px solid var(--border); padding: 16px 24px; position: sticky; top: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); z-index: 100; display: flex; align-items: center; justify-content: space-between; max-width: 100%; }
     .header-logo { font-family: var(--font-head); font-size: 22px; font-weight: 800; letter-spacing: -0.5px; text-decoration: none; }
     .header-logo .w { color: var(--accent); }
     .header-logo .p { color: var(--text); }
     .header-tagline { font-size: 13px; color: var(--text-3); font-style: italic; }
-    .hero { padding: 56px 0 48px; border-bottom: 1px solid var(--border); margin-bottom: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
-    .hero-logo { font-family: var(--font-head); font-size: 52px; font-weight: 800; letter-spacing: -2px; line-height: 1; margin-bottom: 10px; }
-    .hero-logo .w { color: var(--accent); }
-    .hero-logo .p { color: var(--text); }
-    .hero-sub { font-size: 17px; color: var(--text-2); font-style: italic; margin-bottom: 24px; line-height: 1.5; }
+    .hero { padding: 48px 0 40px; border-bottom: 1px solid var(--border); margin-bottom: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+    .hero-headline { font-family: var(--font-head); font-size: 28px; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; margin-bottom: 20px; color: var(--text); }
+    .hero-headline .w { color: var(--accent); }
     .hero-body { font-size: 14px; color: var(--text-2); line-height: 1.85; }
-    .hero-body p { margin-bottom: 12px; }
+    .hero-body p { margin-bottom: 14px; }
     .hero-body p:last-child { margin-bottom: 0; }
     .hero-body strong { color: var(--text); font-weight: 600; }
     .hero-body a { color: var(--accent); text-decoration: none; font-weight: 500; }
     .hero-body a:hover { text-decoration: underline; }
+    /* "This is where you come in" call-out box */
+    .hero-cta-box { margin: 20px 0; }
+    .hero-cta-box-inner { background: var(--accent); border-radius: var(--radius-lg); padding: 22px 24px; }
+    .hero-cta-box-heading { font-family: var(--font-head); font-size: 17px; font-weight: 800; color: white; margin-bottom: 10px; letter-spacing: -0.3px; }
+    .hero-cta-box-inner p { color: rgba(255,255,255,0.9); margin-bottom: 16px; font-size: 14px; }
+    .hero-cta-inline { background: white; color: var(--accent); border: none; border-radius: var(--radius-sm); padding: 11px 18px; font-size: 14px; font-weight: 700; font-family: var(--font-head); cursor: pointer; transition: all 0.2s; letter-spacing: -0.2px; }
+    .hero-cta-inline:hover { background: var(--accent-light); transform: translateY(-1px); }
     .hero-right { background: var(--bg-warm); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 28px; }
     .hero-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
     .hero-stat { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; text-align: center; }
@@ -51,6 +60,8 @@
     .hero-cta { background: var(--accent); color: white; border: none; border-radius: var(--radius); padding: 14px 20px; font-size: 15px; font-weight: 700; font-family: var(--font-head); cursor: pointer; width: 100%; transition: all 0.2s; letter-spacing: -0.2px; }
     .hero-cta:hover { background: var(--accent-dark); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(232,98,42,0.35); }
     .hero-cta-sub { font-size: 12px; color: var(--text-3); text-align: center; margin-top: 10px; }
+    /* Mobile stats strip */
+    .hero-mobile-strip { display: none; }
     .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
     .section-title { font-family: var(--font-head); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-3); }
     .filters { background: var(--bg-warm); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 16px; }
@@ -157,16 +168,26 @@
     .footer-text { font-size: 12px; color: var(--text-3); }
     .footer-text a { color: var(--accent); text-decoration: none; }
     @media (max-width: 900px) {
-      .hero { grid-template-columns: 1fr; }
-      .hero-logo { font-size: 38px; }
+      .hero { grid-template-columns: 1fr; gap: 0; padding: 28px 0 0; }
+      .hero-headline { font-size: 22px; margin-bottom: 16px; }
+      .hero-right { display: none; }
+      .hero-mobile-strip { display: grid; grid-template-columns: 1fr 1px 1fr auto; align-items: center; gap: 0; background: var(--accent); border-radius: var(--radius-lg); margin-top: 24px; margin-bottom: -1px; overflow: hidden; }
+      .hero-mobile-stat { display: flex; flex-direction: column; align-items: center; padding: 16px 12px; }
+      .hero-mobile-val { font-family: var(--font-head); font-size: 28px; font-weight: 800; color: white; line-height: 1; }
+      .hero-mobile-label { font-size: 10px; color: rgba(255,255,255,0.75); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 3px; font-weight: 500; }
+      .hero-mobile-divider { width: 1px; height: 40px; background: rgba(255,255,255,0.25); }
+      .hero-mobile-cta { background: white; color: var(--accent); border: none; border-radius: var(--radius-sm); margin: 12px; padding: 10px 14px; font-size: 13px; font-weight: 700; font-family: var(--font-head); cursor: pointer; white-space: nowrap; }
+      .hero-left { padding-bottom: 0; }
       .filter-grid { grid-template-columns: 1fr 1fr; }
       .form-grid { grid-template-columns: 1fr 1fr; }
-      .hero-right { display: none; }
     }
     @media (max-width: 600px) {
       .filter-grid { grid-template-columns: 1fr; }
       .form-grid { grid-template-columns: 1fr; }
       .fab { bottom: 16px; right: 16px; padding: 13px 18px; font-size: 14px; }
+      .hero-mobile-strip { grid-template-columns: 1fr 1px 1fr; }
+      .hero-mobile-cta { display: none; }
+      .hero-cta-inline { width: 100%; text-align: center; }
     }
   </style>
 </head>
@@ -174,21 +195,28 @@
 
 <header class="site-header">
   <a class="header-logo" href="#"><span class="w">Width</span><span class="p">ipedia</span></a>
-  <span class="header-tagline">The community shoe width wiki</span>
+  <span class="header-tagline">The shoe width wiki</span>
 </header>
 
 <main>
   <div class="page">
     <section class="hero">
       <div class="hero-left">
-        <div class="hero-logo"><span class="w">Width</span><span class="p">ipedia</span></div>
-        <div class="hero-sub">The community wiki for people who are tired of shoes that don't fit.</div>
+        <h1 class="hero-headline">Widthipedia is for anyone tired of buying shoes that don't fit.</h1>
         <div class="hero-body">
-          <p>If you have wide or narrow feet, you'll know the frustration. Most shoe brands publish size guides that list length but rarely width. Most retailers don't stock the extended sizes. So you end up buying online, trying on at home, and sending back. Repeat. Forever.</p>
-          <p>Widthipedia was born out of that frustration. The idea is simple: what if you could search a wiki and instantly find which brands and models are over 100mm or under 90mm wide?</p>
-          <p><strong>That's where you come in.</strong> If you've found this page, chances are you're wasting time on the same merry-go-round. Every shoe you try on is data. Whether you keep it or return it, measuring the insole takes two minutes and helps everyone who comes after you.</p>
-          <p>Together we can build the most useful shoe width resource on the internet and maybe one day get the brands themselves to start publishing this information.</p>
-          <p><strong>Thank you for being part of it.</strong> Have a suggestion or want to get in touch? Drop us a message at <a href="mailto:hello@widthipedia.com">hello@widthipedia.com</a></p>
+          <p>If you have wide or narrow feet, you know the struggle. Brands publish lengths but rarely widths. Retailers skip extended sizes. So buying shoes becomes an endless loop of ordering, trying on and returning.</p>
+          <p>Widthipedia was born out of that frustration: a searchable wiki of actual insole measurements by size to help you find shoes that truly fit.</p>
+
+          <div class="hero-cta-box">
+            <div class="hero-cta-box-inner">
+              <div class="hero-cta-box-heading">This is where you come in.</div>
+              <p>Every shoe you try on is data. Whether you keep it or return it, a quick insole measurement takes two minutes and helps the next person avoid the guesswork.</p>
+              <button class="hero-cta-inline" onclick="openForm()">+ Add a shoe — it takes 2 minutes</button>
+            </div>
+          </div>
+
+          <p>Together we can build the internet's best shoe‑width resource and maybe even nudge brands to do better.</p>
+          <p><strong>Thank you for being part of it.</strong> Suggestions or questions: <a href="mailto:hello@widthipedia.com">hello@widthipedia.com</a></p>
         </div>
       </div>
       <div class="hero-right">
@@ -204,6 +232,19 @@
         </div>
         <button class="hero-cta" onclick="openForm()">+ Add a shoe</button>
         <div class="hero-cta-sub">Takes about 2 minutes &middot; No account needed</div>
+      </div>
+      <!-- Mobile stats strip — only shows on small screens -->
+      <div class="hero-mobile-strip">
+        <div class="hero-mobile-stat">
+          <span class="hero-mobile-val" id="stat-shoes-m">0</span>
+          <span class="hero-mobile-label">shoes logged</span>
+        </div>
+        <div class="hero-mobile-divider"></div>
+        <div class="hero-mobile-stat">
+          <span class="hero-mobile-val" id="stat-brands-m">0</span>
+          <span class="hero-mobile-label">brands covered</span>
+        </div>
+        <button class="hero-mobile-cta" onclick="openForm()">+ Add a shoe</button>
       </div>
     </section>
 
@@ -431,7 +472,7 @@
 
 <script>
   const SUPABASE_URL = 'https://cwkwswhtolsngircwcgi.supabase.co'
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN3a3dzd2h0b2xzbmdpcmN3Y2dpIiwicm9sZSI6ImFub24iLCJpYXQiOj'
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN3a3dzd2h0b2xzbmdpcmN3Y2dpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3ODQxNDMsImV4cCI6MjA5NTM2MDE0M30.UayjYuFbW9lnIYIeIApEFqtwVdGf4EMKGj3Za2-F_fE'
   const { createClient } = supabase
   const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
   let allData = [], filteredData = [], editingId = null, pendingEntry = null
@@ -520,6 +561,8 @@
     const brands=new Set(allData.map(r=>r.brand).filter(Boolean)).size
     document.getElementById('stat-shoes').textContent=allData.length
     document.getElementById('stat-brands').textContent=brands
+    document.getElementById('stat-shoes-m').textContent=allData.length
+    document.getElementById('stat-brands-m').textContent=brands
   }
 
   function esc(v){if(!v)return'—';return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -536,9 +579,9 @@
     updateSizeFilter();
   }
 
-  function openForm(){editingId=null;clearForm();document.getElementById('form-title').textContent='Add a shoe';document.getElementById('editing-pill').style.display='none';document.getElementById('save-btn').textContent='Save entry';document.getElementById('form-overlay').classList.add('open');document.getElementById('f-brand').focus();}
-  function openEdit(id){const r=allData.find(x=>x.id===id);if(!r)return;editingId=id;fillForm(r);document.getElementById('form-title').textContent=(r.brand||'')+' '+(r.model||'');document.getElementById('editing-pill').style.display='inline-block';document.getElementById('save-btn').textContent='Update entry';document.getElementById('form-overlay').classList.add('open');document.getElementById('f-brand').focus();}
-  function closeForm(){document.getElementById('form-overlay').classList.remove('open');editingId=null;hideDupe();clearErrors();}
+  function openForm(){editingId=null;clearForm();document.getElementById('form-title').textContent='Add a shoe';document.getElementById('editing-pill').style.display='none';document.getElementById('save-btn').textContent='Save entry';document.getElementById('form-overlay').classList.add('open');document.body.style.overflow='hidden';document.getElementById('f-brand').focus();}
+  function openEdit(id){const r=allData.find(x=>x.id===id);if(!r)return;editingId=id;fillForm(r);document.getElementById('form-title').textContent=(r.brand||'')+' '+(r.model||'');document.getElementById('editing-pill').style.display='inline-block';document.getElementById('save-btn').textContent='Update entry';document.getElementById('form-overlay').classList.add('open');document.body.style.overflow='hidden';document.getElementById('f-brand').focus();}
+  function closeForm(){document.getElementById('form-overlay').classList.remove('open');document.body.style.overflow='';editingId=null;hideDupe();clearErrors();}
   function overlayClick(e){if(e.target===document.getElementById('form-overlay'))closeForm();}
 
   function fillForm(r){
