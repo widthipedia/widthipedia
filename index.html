@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
   <title>Widthipedia — Shoe Width Guide for Wide &amp; Narrow Feet</title>
   <meta name="description" content="Find shoes that actually fit. Widthipedia is a community wiki of real insole width measurements by brand, model and size — built for people with wide or narrow feet.">
   <meta name="keywords" content="wide fit shoes, wide feet shoes, shoe width guide, narrow feet shoes, insole width, shoe width measurements, wide shoe database, 2E 4E wide fitting shoes">
@@ -580,9 +580,32 @@
   }
 
   let _scrollY = 0;
-  function openForm(){editingId=null;clearForm();document.getElementById('form-title').textContent='Add a shoe';document.getElementById('editing-pill').style.display='none';document.getElementById('save-btn').textContent='Save entry';_scrollY=window.scrollY;document.body.style.position='fixed';document.body.style.top='-'+_scrollY+'px';document.body.style.width='100%';document.getElementById('form-overlay').classList.add('open');document.getElementById('f-brand').focus();}
-  function openEdit(id){const r=allData.find(x=>x.id===id);if(!r)return;editingId=id;fillForm(r);document.getElementById('form-title').textContent=(r.brand||'')+' '+(r.model||'');document.getElementById('editing-pill').style.display='inline-block';document.getElementById('save-btn').textContent='Update entry';_scrollY=window.scrollY;document.body.style.position='fixed';document.body.style.top='-'+_scrollY+'px';document.body.style.width='100%';document.getElementById('form-overlay').classList.add('open');document.getElementById('f-brand').focus();}
-  function closeForm(){document.getElementById('form-overlay').classList.remove('open');document.body.style.position='';document.body.style.top='';document.body.style.width='';window.scrollTo(0,_scrollY);editingId=null;hideDupe();clearErrors();}
+  function openForm(){
+    editingId=null;clearForm();
+    document.getElementById('form-title').textContent='Add a shoe';
+    document.getElementById('editing-pill').style.display='none';
+    document.getElementById('save-btn').textContent='Save entry';
+    _scrollY = window.pageYOffset;
+    document.body.style.cssText='position:fixed;top:-'+_scrollY+'px;left:0;right:0;overflow-y:scroll;';
+    document.getElementById('form-overlay').classList.add('open');
+    document.getElementById('f-brand').focus();
+  }
+  function openEdit(id){
+    const r=allData.find(x=>x.id===id);if(!r)return;editingId=id;fillForm(r);
+    document.getElementById('form-title').textContent=(r.brand||'')+' '+(r.model||'');
+    document.getElementById('editing-pill').style.display='inline-block';
+    document.getElementById('save-btn').textContent='Update entry';
+    _scrollY = window.pageYOffset;
+    document.body.style.cssText='position:fixed;top:-'+_scrollY+'px;left:0;right:0;overflow-y:scroll;';
+    document.getElementById('form-overlay').classList.add('open');
+    document.getElementById('f-brand').focus();
+  }
+  function closeForm(){
+    document.getElementById('form-overlay').classList.remove('open');
+    document.body.style.cssText='';
+    window.scrollTo(0, _scrollY);
+    editingId=null;hideDupe();clearErrors();
+  }
   function overlayClick(e){if(e.target===document.getElementById('form-overlay'))closeForm();}
 
   function fillForm(r){
